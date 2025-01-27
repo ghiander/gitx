@@ -1,0 +1,67 @@
+#!/bin/bash
+
+function show_help {
+    echo "   ___ _ _   _  ___ _   "
+    echo "  / __(_) |_| |/ (_) |_ "
+    echo " | (_ | |  _| ' <| |  _|"
+    echo "  \___|_|\__|_|\_\_|\__|"
+    echo "                        "
+    echo "GitExt - A CLI tool for custom Git commands"
+    echo ""
+    echo "Usage: gitk [command]"
+    echo ""
+    echo "Commands:"
+    echo "  load_submodule      Downloads the files of a submodule from scratch"
+    echo "  recreate_tags       Deletes the local tags and pulls them back from remote"
+    echo "  recreate_branches   Downloads the files of an empty/outdated submodule"
+    echo "  recursive_pull      Runs \`git pull\` in the current dir and its subdirs"
+    echo "  help                Show this help message"
+    echo "  (Git command)       Any Git commands will be called using \`git\`"
+}
+
+function load_submodule {
+    git submodule init
+    git submodule update
+}
+
+function recreate_tags {
+    git tag -l | xargs git tag -d
+    git fetch --tags
+}
+
+function recreate_branches {
+    git branch | xargs git branch -d
+    git remote prune origin
+    git fetch
+}
+
+function recursive_pull {
+    ls | xargs -I{} git -C {} pull
+}
+
+# Show help if no arguments are provided
+if [ -z "$1" ]; then
+    show_help
+    exit 0
+fi
+
+case "$1" in
+    load_submodule)
+        load_submodule
+        ;;
+    recreate_tags)
+        recreate_tags
+        ;;
+    recreate_branches)
+        recreate_branches
+        ;;
+    recursive_pull)
+        recursive_pull
+        ;;
+    help)
+        show_help
+        ;;
+    *)
+        git "$@"
+        ;;
+esac
