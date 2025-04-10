@@ -67,6 +67,9 @@ case "$1" in
     recursive_pull)
         recursive_pull
         ;;
+    recreate_refs)
+        recreate_refs
+        ;;
     help)
         show_help
         ;;
