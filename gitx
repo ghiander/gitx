@@ -15,13 +15,15 @@ function show_help {
     echo "Commands:"
     echo "  load_submodule      Downloads the files of a submodule from scratch"
     echo "  recreate_tags       Deletes the local tags and pulls them back from remote"
-    echo "  recreate_branches   Downloads the files of an empty/outdated submodule"
+    echo "  recreate_branches   Deletes the local branches and pulls them back from remote"
+    echo "  recreate_refs       Deletes the local tags and branches and pulls them back from remote"
     echo "  recursive_pull      Runs \`git pull\` in the current dir and its subdirs"
     echo "  help                Show this help message"
     echo "  (Git command)       Any Git commands will be called using \`git\`"
 }
 
 function load_submodule {
+    git submodule sync --recursive
     git submodule init
     git submodule update
 }
@@ -35,6 +37,11 @@ function recreate_branches {
     git branch | xargs git branch -d
     git remote prune origin
     git fetch
+}
+
+function recreate_refs {
+    gitx recreate_tags
+    gitx recreate_branches
 }
 
 function recursive_pull {
